@@ -1,0 +1,35 @@
+.root{
+    -fx-background-color: #9fc490;
+    background-color: #9fc490;
+}
+
+.button{
+    -fx-background-color: #303030;
+    background-color: #303030;
+
+    -fx-background-radius: 100;
+    -fx-background-insets: 5, 1;
+
+    -fx-border-radius: 100%;
+    border-radius: 100%;
+
+    -fx-border-insets: 5px;
+    -fx-border-color: #cf4780;
+    border-color: #cf4780;
+
+    -fx-padding: 10 15 10 15;
+    padding: 10 15 10 15;
+
+    -fx-text-fill: #eeeeee;
+    -fx-text-family: "Roboto";
+    -fx-font-size: 14px;
+    font-size: 14px;
+    
+    -fx-transition: -fx-background-color 4000ms;
+    transition: -fx-background-color 4000ms;
+}
+
+.button:hover{
+    -fx-background-color: #cf4780;
+    background-color: #cf4780;
+}

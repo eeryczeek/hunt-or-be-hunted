@@ -1,0 +1,11 @@
+.root{
+    -fx-background-color: #9fc490;
+    background-color: #9fc490;
+}
+
+.label{
+    -fx-text-fill: #202020;
+    -fx-text-family: "Roboto";
+    -fx-font-size: 14px;
+    font-size: 14px;
+}
