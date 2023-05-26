@@ -18,62 +18,60 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
-public class SimulationGUI extends VBox{
+public class SimulationGUI extends VBox {
     private static SimulationGUI single_instance = null;
 
     private Stage simulationStage;
     public static Canvas canvas;
     private Affine affine;
-    
-    private SimulationGUI(int WINDOW_SIZE, int GRID_SIZE){
+
+    private SimulationGUI(int WINDOW_SIZE, int GRID_SIZE) {
         simulationStage = new Stage();
         simulationStage.setTitle("Simulation");
         simulationStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
 
         affine = new Affine();
-        affine.appendScale((double) WINDOW_SIZE/GRID_SIZE, (double) WINDOW_SIZE/GRID_SIZE);
+        affine.appendScale((double) WINDOW_SIZE / GRID_SIZE, (double) WINDOW_SIZE / GRID_SIZE);
 
         canvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         this.getChildren().addAll(canvas);
-        
+
         Scene scene = new Scene(this, WINDOW_SIZE, WINDOW_SIZE);
-        simulationStage.setOnCloseRequest(e -> System.exit(0));
         simulationStage.setScene(scene);
-        simulationStage.show();
         simulationStage.setY(60);
     }
 
     public void draw() {
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             GraphicsContext graphics = SimulationGUI.canvas.getGraphicsContext2D();
             graphics.setTransform(this.affine);
 
             graphics.setFill(Color.web("9fc490"));
             graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-            for (Path path: World.paths){
+            for (Path path : World.paths) {
                 path.display(graphics);
             }
-            for (Cave cave: World.caves){
+            for (Cave cave : World.caves) {
                 cave.display(graphics);
             }
-            for (Pond pond: World.ponds){
+            for (Pond pond : World.ponds) {
                 pond.display(graphics);
             }
-            for (Plant plant: World.plants){
+            for (Plant plant : World.plants) {
                 plant.display(graphics);
             }
-            for (Predator predator: World.predators){
+            for (Predator predator : World.predators) {
                 predator.display(graphics);
             }
-            for (Prey prey: World.preys){
+            for (Prey prey : World.preys) {
                 prey.display(graphics);
             }
         });
     }
 
-    public static SimulationGUI getInstance(int WINDOW_SIZE, int GRID_SIZE){
-        if (single_instance == null){
+    public static SimulationGUI getInstance(int WINDOW_SIZE, int GRID_SIZE) {
+        if (single_instance == null) {
             single_instance = new SimulationGUI(WINDOW_SIZE, GRID_SIZE);
         }
         return single_instance;

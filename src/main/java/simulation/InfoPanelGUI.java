@@ -10,33 +10,21 @@ import environment.animal.Prey;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 
 public class InfoPanelGUI extends VBox {
     private static InfoPanelGUI single_instance = null;
 
-    private Stage infoStage;
+    private InfoPanelGUI(int SIMULATION_WINDOW_SIZE, int INFO_PANEL_WINDOW_SIZE) {
 
-    private InfoPanelGUI(int INFO_PANEL_WINDOW_SIZE, int SIMULATION_WINDOW_SIZE) {
-        infoStage = new Stage();
-        infoStage.setTitle("Info Panel");
-        infoStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
-
-        this.setPadding(new Insets(10));
-        this.setSpacing(4);
+        this.setPadding(new Insets(16));
+        this.setSpacing(8);
         this.getChildren().addAll(new Label("Please select an object :)"));
 
-        infoStage.setScene(new Scene(this, INFO_PANEL_WINDOW_SIZE, INFO_PANEL_WINDOW_SIZE));
-        infoStage.getScene().getStylesheets().add(getClass().getResource("InfoPanelGUI.css").toExternalForm());
-        infoStage.setOnCloseRequest(e -> System.exit(0));
-        infoStage.setX(1080);
-        infoStage.setY(60);
+        this.getStylesheets().add(getClass().getResource("InfoPanelGUI.css").toExternalForm());
 
         SimulationGUI.canvas.setOnMouseClicked(e -> {
-            Platform.runLater(()->{
+            Platform.runLater(() -> {
                 int x = (int) (e.getX() / (SIMULATION_WINDOW_SIZE / World.GRID_SIZE));
                 int y = (int) (e.getY() / (SIMULATION_WINDOW_SIZE / World.GRID_SIZE));
 
@@ -72,10 +60,9 @@ public class InfoPanelGUI extends VBox {
                 }
             });
         });
-        infoStage.show();
     }
 
-    public void show(){
+    public void show() {
         if (World.selectedObject != null) {
             Platform.runLater(() -> {
                 World.selectedObject.describe(this);
@@ -83,8 +70,8 @@ public class InfoPanelGUI extends VBox {
         }
     }
 
-    public static InfoPanelGUI getInstance(int WINDOW_SIZE, int SIMULATION_WINDOW_SIZE){
-        if (single_instance == null){
+    public static InfoPanelGUI getInstance(int WINDOW_SIZE, int SIMULATION_WINDOW_SIZE) {
+        if (single_instance == null) {
             single_instance = new InfoPanelGUI(WINDOW_SIZE, SIMULATION_WINDOW_SIZE);
         }
         return single_instance;
