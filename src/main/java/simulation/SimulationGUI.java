@@ -10,7 +10,6 @@ import environment.destinations.Pond;
 import javafx.application.Platform;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.transform.Affine;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.VBox;
@@ -28,7 +27,6 @@ public class SimulationGUI extends VBox {
     private SimulationGUI(int WINDOW_SIZE, int GRID_SIZE) {
         simulationStage = new Stage();
         simulationStage.setTitle("Simulation");
-        simulationStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
 
         affine = new Affine();
         affine.appendScale((double) WINDOW_SIZE / GRID_SIZE, (double) WINDOW_SIZE / GRID_SIZE);

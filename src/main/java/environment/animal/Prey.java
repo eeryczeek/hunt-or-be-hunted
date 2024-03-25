@@ -1,10 +1,6 @@
 package environment.animal;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 import environment.World;
 import environment.destinations.Cave;
 import environment.destinations.Plant;
@@ -13,16 +9,16 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import simulation.InfoPanelGUI;
 
-public class Prey extends Animal implements Runnable{
+public class Prey extends Animal implements Runnable {
 
     private int hunger;
     private int thirst;
-    private LinkedList<int[]> path = null;
-    private boolean reroute = false;
-    private boolean hiding = false;
+    private LinkedList<int[]> path;
+    private boolean reroute;
+    private boolean hiding;
     private String color = "ff6978";
 
-    public Prey(String NAME, int X, int Y){
+    public Prey(String NAME, int X, int Y) {
         super(NAME, X, Y, "prey", randomInt(70, 100), randomInt(0, 7), randomInt(0, 7));
         this.hunger = 0;
         this.thirst = 0;
@@ -32,17 +28,17 @@ public class Prey extends Animal implements Runnable{
         thread.start();
     }
 
-    public void display(GraphicsContext graphics){
-        if (this.getHealth() <= 0) {
-            World.preys.remove(this);
-        } else {
+    public void display(GraphicsContext graphics) {
+        if (this.getHealth() > 0) {
             super.display(graphics, color);
+        } else {
+            World.preys.remove(this);
         }
     }
 
-    public void describe(InfoPanelGUI info_panel_window){
+    public void describe(InfoPanelGUI info_panel_window) {
         super.describe(info_panel_window);
-        if (World.selectedObject != null){
+        if (World.selectedObject != null) {
             info_panel_window.getChildren().add(new Label("Hunger: " + this.getHunger()));
             info_panel_window.getChildren().add(new Label("Thirst: " + this.getThirst()));
         }
@@ -52,77 +48,83 @@ public class Prey extends Animal implements Runnable{
         return (int) (Math.random() * (max - min)) + min;
     }
 
-    public void travel(){
-        while (path != null && !path.isEmpty()){
+    public void travel() {
+        while (path != null && !path.isEmpty()) {
             int[] new_coordinates = path.pollLast();
             this.wait(1000 - this.getSpeed() * 100);
-            this.setHunger(getHunger()+1);
-            this.setThirst(getThirst()+1);
+            this.setHunger(getHunger() + 1);
+            this.setThirst(getThirst() + 1);
             this.setX(new_coordinates[0]);
             this.setY(new_coordinates[1]);
         }
     }
 
-    public void handle_thirst(){
+    public void handle_thirst() {
         path = generatePaths(this.getX(), this.getY(), 'W');
         travel();
-        if (World.MAP[this.getX()][this.getY()] == 'W'){
+        if (World.MAP[this.getX()][this.getY()] == 'W') {
             Pond this_pond = null;
-            for (Pond pond: World.ponds){
-                if (pond.getX() == this.getX() && pond.getY() == this.getY()){
+            for (Pond pond : World.ponds) {
+                if (pond.getX() == this.getX() && pond.getY() == this.getY()) {
                     this_pond = pond;
                     break;
                 }
             }
-            while (!this_pond.enter()){wait(100);}
-            while (this.thirst > 20){
+            while (!this_pond.enter()) {
+                wait(100);
+            }
+            while (this.thirst > 20) {
                 drink(this_pond);
             }
             this_pond.leave();
         }
     }
 
-    public void drink(Pond pond){
-        this.setThirst(getThirst()-1);
+    public void drink(Pond pond) {
+        this.setThirst(getThirst() - 1);
         this.wait(1000 - pond.getReplenish_speed() * 100);
     }
 
-    public void handle_hunger(){
+    public void handle_hunger() {
         path = generatePaths(this.getX(), this.getY(), 'F');
         travel();
-        if (World.MAP[this.getX()][this.getY()] == 'F'){
+        if (World.MAP[this.getX()][this.getY()] == 'F') {
             Plant this_plant = null;
-            for (Plant plant: World.plants){
-                if (plant.getX() == this.getX() && plant.getY() == this.getY()){
+            for (Plant plant : World.plants) {
+                if (plant.getX() == this.getX() && plant.getY() == this.getY()) {
                     this_plant = plant;
                     break;
                 }
             }
-            while (!this_plant.enter()){wait(100);}
-            while (this.hunger > 20){
+            while (!this_plant.enter()) {
+                wait(100);
+            }
+            while (this.hunger > 20) {
                 eat(this_plant);
             }
             this_plant.leave();
         }
     }
 
-    public void eat(Plant plant){
-        this.setHunger(getHunger()-1);
+    public void eat(Plant plant) {
+        this.setHunger(getHunger() - 1);
         this.wait(1000 - plant.getReplenish_speed() * 100);
     }
 
-    public void handle_loneliness(){
+    public void handle_loneliness() {
         path = generatePaths(this.getX(), this.getY(), 'C');
         travel();
-        if (World.MAP[this.getX()][this.getY()] == 'C'){
+        if (World.MAP[this.getX()][this.getY()] == 'C') {
             Cave this_cave = null;
-            for (Cave cave: World.caves){
-                if (cave.getX() == this.getX() && cave.getY() == this.getY()){
+            for (Cave cave : World.caves) {
+                if (cave.getX() == this.getX() && cave.getY() == this.getY()) {
                     this_cave = cave;
                     break;
                 }
             }
-            while(!this_cave.enter()){wait(100);}
+            while (!this_cave.enter()) {
+                wait(100);
+            }
             hiding = true;
             rest();
             reproduce(this_cave);
@@ -131,39 +133,40 @@ public class Prey extends Animal implements Runnable{
         }
     }
 
-    public void rest(){
-        while (this.getHealth() < 100){
-            this.setHunger(getHunger()+1);
-            this.setThirst(getThirst()+1);
-            this.setHealth(this.getHealth()+1);
+    public void rest() {
+        while (this.getHealth() < 100) {
+            this.setHunger(getHunger() + 1);
+            this.setThirst(getThirst() + 1);
+            this.setHealth(this.getHealth() + 1);
             this.wait(100);
-            if (this.getHunger() > 60 || this.getThirst() > 60){
+            if (this.getHunger() > 60 || this.getThirst() > 60) {
                 break;
             }
         }
         this.wait(1000);
     }
 
-    public void reproduce(Cave cave){
-        if (this.getHealth() == 100 && this.getHunger() < 70 && this.getThirst() < 70){
+    public void reproduce(Cave cave) {
+        if (this.getHealth() == 100 && this.getHunger() < 70 && this.getThirst() < 70) {
             Random random = new Random();
             double probability = random.nextDouble();
-            if (probability < cave.getReproduction_probability()){
+            if (probability < cave.getReproduction_probability()) {
                 new Prey("prey", this.getX(), this.getY());
             }
         }
     }
 
-    public int[] random_direction(int X, int Y){
+    public int[] random_direction(int X, int Y) {
         Random random = new Random();
-        while (true){
-            int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+        while (true) {
+            int[][] dirs = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
             int[] random_dir = Arrays.asList(dirs).get(random.nextInt(4));
 
             int nextX = X + random_dir[0];
             int nextY = Y + random_dir[1];
             if (nextX >= 0 && nextX < World.MAP.length && nextY >= 0 && nextY < World.MAP.length) {
-                if (World.MAP[nextX][nextY] == 'p' || World.MAP[nextX][nextY] == 'C' || World.MAP[nextX][nextY] == 'F' || World.MAP[nextX][nextY] == 'W'){
+                if (World.MAP[nextX][nextY] == 'p' || World.MAP[nextX][nextY] == 'C' || World.MAP[nextX][nextY] == 'F'
+                        || World.MAP[nextX][nextY] == 'W') {
                     return random_dir;
                 }
             }
@@ -171,17 +174,17 @@ public class Prey extends Animal implements Runnable{
     }
 
     @Override
-    public void wander(){
+    public void wander() {
         int wandering_iterations = randomInt(5, 15);
-        for (int i = 0; i < wandering_iterations; i++){
-            if (this.thirst > 40 || this.hunger > 40){
+        for (int i = 0; i < wandering_iterations; i++) {
+            if (this.thirst > 40 || this.hunger > 40) {
                 break;
             }
             int[] direction = random_direction(this.getX(), this.getY());
-            this.setX(getX()+direction[0]);
-            this.setY(getY()+direction[1]);
-            this.setThirst(getThirst()+1);
-            this.setHunger(getHunger()+1);
+            this.setX(getX() + direction[0]);
+            this.setY(getY() + direction[1]);
+            this.setThirst(getThirst() + 1);
+            this.setHunger(getHunger() + 1);
             wait(1000 - getSpeed() * 100);
         }
     }
@@ -189,33 +192,31 @@ public class Prey extends Animal implements Runnable{
     @Override
     public void run() {
         wander();
-        while (this.getHealth() > 0){
-            if (this.thirst >= 100 || this.hunger >= 100){
-                if (this.thirst >= 100 && this.hunger >= 100){
+        while (this.getHealth() > 0) {
+            if (this.thirst >= 100 || this.hunger >= 100) {
+                if (this.thirst >= 100 && this.hunger >= 100) {
                     this.setHealth(this.getHealth() - 4);
                 }
                 this.setHealth(this.getHealth() - 1);
             }
-            if (this.thirst > 40){
+            if (this.thirst > 40) {
                 handle_thirst();
-            }
-            else if (this.hunger > 40){
+            } else if (this.hunger > 40) {
                 handle_hunger();
-            }
-            else if (!hiding){
+            } else if (!hiding) {
                 handle_loneliness();
                 wander();
             }
-            this.setThirst(getThirst()+1);
-            this.setHunger(getHunger()+1);
+            this.setThirst(getThirst() + 1);
+            this.setHunger(getHunger() + 1);
         }
     }
 
-    public static LinkedList<int[]> generatePaths(int X, int Y, char destination){
+    public static LinkedList<int[]> generatePaths(int X, int Y, char destination) {
         LinkedList<int[]> path = new LinkedList<>();
 
         Queue<int[]> queue = new LinkedList<>();
-        queue.add(new int[] {X, Y});
+        queue.add(new int[] { X, Y });
 
         boolean[][] visited = new boolean[World.MAP.length][World.MAP.length];
         visited[X][Y] = true;
@@ -229,22 +230,24 @@ public class Prey extends Animal implements Runnable{
 
             if (World.MAP[x][y] == destination) {
                 int[] currentCoord = current;
-                while (currentCoord != null){
+                while (currentCoord != null) {
                     path.add(currentCoord);
                     currentCoord = map_exploration.get(currentCoord);
                 }
                 return path;
             }
 
-            int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+            int[][] dirs = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
             for (int[] dir : dirs) {
                 int nextX = x + dir[0];
                 int nextY = y + dir[1];
-                if (nextX >= 0 && nextX < World.MAP.length && nextY >= 0 && nextY < World.MAP.length && !visited[nextX][nextY]) {
-                    if (World.MAP[nextX][nextY] == 'p' || World.MAP[nextX][nextY] == 'C' || World.MAP[nextX][nextY] == 'F' || World.MAP[nextX][nextY] == 'W'){
-                        queue.add(new int[] {nextX, nextY});
+                if (nextX >= 0 && nextX < World.MAP.length && nextY >= 0 && nextY < World.MAP.length
+                        && !visited[nextX][nextY]) {
+                    if (World.MAP[nextX][nextY] == 'p' || World.MAP[nextX][nextY] == 'C'
+                            || World.MAP[nextX][nextY] == 'F' || World.MAP[nextX][nextY] == 'W') {
+                        queue.add(new int[] { nextX, nextY });
                         visited[nextX][nextY] = true;
-                        map_exploration.put(new int[] {nextX, nextY}, current);
+                        map_exploration.put(new int[] { nextX, nextY }, current);
                     }
                 }
             }

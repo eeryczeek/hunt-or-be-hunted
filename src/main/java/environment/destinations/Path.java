@@ -19,27 +19,22 @@ public class Path extends EnvironmentStuff {
         super(NAME, X, Y, CAPACITY);
     }
 
-    public void display(GraphicsContext graphics){
-        if (this.equals(World.selectedObject)){
-            graphics.setFill(Color.web("efeff0"));
-            graphics.fillRect(this.getX(), this.getY(), 1, 1);
-        } else {
-            graphics.setFill(Color.web("e5c687"));
-            graphics.fillRect(this.getX(), this.getY(), 1, 1);
-        }
+    public void display(GraphicsContext graphics) {
+        graphics.setFill(this.equals(World.selectedObject) ? Color.web("efeff0") : Color.web("e5c687"));
+        graphics.fillRect(this.getX(), this.getY(), 1, 1);
     }
-    
+
     public static ArrayList<Path> generatePaths() {
         ArrayList<Path> PATHS = new ArrayList<>();
         Set<int[]> points = new HashSet<int[]>();
-        
-        for (Cave cave: World.caves) {
-            List<Character> destinations = new ArrayList<>(Arrays.asList( 'c', 'c', 'w', 'w', 'w', 'f', 'f', 'f'));
+
+        for (Cave cave : World.caves) {
+            List<Character> destinations = new ArrayList<>(Arrays.asList('c', 'c', 'w', 'w', 'w', 'f', 'f', 'f'));
             int caveX = cave.getX();
             int caveY = cave.getY();
 
             Queue<int[]> queue = new LinkedList<>();
-            queue.add(new int[] {caveX, caveY});
+            queue.add(new int[] { caveX, caveY });
 
             boolean[][] visited = new boolean[World.MAP.length][World.MAP.length];
             visited[caveX][caveY] = true;
@@ -60,16 +55,16 @@ public class Path extends EnvironmentStuff {
                     }
 
                     int[] currentCoord = current;
-                    while (currentCoord != null){
+                    while (currentCoord != null) {
                         boolean contains = false;
 
-                        for (int[] point: points){
+                        for (int[] point : points) {
                             if (currentCoord[0] == point[0] && currentCoord[1] == point[1]) {
                                 contains = true;
                                 break;
                             }
                         }
-                        if (!contains){
+                        if (!contains) {
                             points.add(currentCoord);
                             PATHS.add(new Path("path", currentCoord[0], currentCoord[1], 2));
                         }
@@ -77,14 +72,15 @@ public class Path extends EnvironmentStuff {
                     }
                 }
 
-                int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+                int[][] dirs = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
                 for (int[] dir : dirs) {
                     int nextX = x + dir[0];
                     int nextY = y + dir[1];
-                    if (nextX >= 0 && nextX < World.MAP.length && nextY >= 0 && nextY < World.MAP.length && !visited[nextX][nextY]) {
-                        queue.add(new int[] {nextX, nextY});
+                    if (nextX >= 0 && nextX < World.MAP.length && nextY >= 0 && nextY < World.MAP.length
+                            && !visited[nextX][nextY]) {
+                        queue.add(new int[] { nextX, nextY });
                         visited[nextX][nextY] = true;
-                        map_exploration.put(new int[] {nextX, nextY}, current);
+                        map_exploration.put(new int[] { nextX, nextY }, current);
                     }
                 }
             }

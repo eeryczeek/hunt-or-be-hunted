@@ -1,21 +1,18 @@
 package simulation;
 
-import environment.World;
-import environment.destinations.Plant;
-import environment.destinations.Cave;
-import environment.destinations.Pond;
-import environment.animal.Predator;
-import environment.animal.Prey;
+import java.util.Collection;
+import java.util.stream.Stream;
 
+import environment.World;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class InfoPanelGUI extends VBox {
-    private static InfoPanelGUI single_instance = null;
+    private static InfoPanelGUI singleInstance = null;
 
-    private InfoPanelGUI(int SIMULATION_WINDOW_SIZE, int INFO_PANEL_WINDOW_SIZE) {
+    private InfoPanelGUI(int simulationWindowSize, int infoPanelWindowSize) {
 
         this.setPadding(new Insets(16));
         this.setSpacing(8);
@@ -25,39 +22,14 @@ public class InfoPanelGUI extends VBox {
 
         SimulationGUI.canvas.setOnMouseClicked(e -> {
             Platform.runLater(() -> {
-                int x = (int) (e.getX() / (SIMULATION_WINDOW_SIZE / World.GRID_SIZE));
-                int y = (int) (e.getY() / (SIMULATION_WINDOW_SIZE / World.GRID_SIZE));
+                int x = (int) (e.getX() / (simulationWindowSize / World.GRID_SIZE));
+                int y = (int) (e.getY() / (simulationWindowSize / World.GRID_SIZE));
 
-                for (Pond pond : World.ponds) {
-                    if (pond.getX() == x && pond.getY() == y) {
-                        World.selectedObject = pond;
-                        break;
-                    }
-                }
-                for (Plant plant : World.plants) {
-                    if (plant.getX() == x && plant.getY() == y) {
-                        World.selectedObject = plant;
-                        break;
-                    }
-                }
-                for (Prey prey : World.preys) {
-                    if (prey.getX() == x && prey.getY() == y) {
-                        World.selectedObject = prey;
-                        break;
-                    }
-                }
-                for (Predator predator : World.predators) {
-                    if (predator.getX() == x && predator.getY() == y) {
-                        World.selectedObject = predator;
-                        break;
-                    }
-                }
-                for (Cave cave : World.caves) {
-                    if (cave.getX() == x && cave.getY() == y) {
-                        World.selectedObject = cave;
-                        break;
-                    }
-                }
+                World.selectedObject = Stream.of(World.ponds, World.plants, World.preys, World.predators, World.caves)
+                        .flatMap(Collection::stream)
+                        .filter(object -> object.getX() == x && object.getY() == y)
+                        .findFirst()
+                        .orElse(null);
             });
         });
     }
@@ -70,10 +42,10 @@ public class InfoPanelGUI extends VBox {
         }
     }
 
-    public static InfoPanelGUI getInstance(int WINDOW_SIZE, int SIMULATION_WINDOW_SIZE) {
-        if (single_instance == null) {
-            single_instance = new InfoPanelGUI(WINDOW_SIZE, SIMULATION_WINDOW_SIZE);
+    public static InfoPanelGUI getInstance(int windowSize, int simulationWindowSize) {
+        if (singleInstance == null) {
+            singleInstance = new InfoPanelGUI(windowSize, simulationWindowSize);
         }
-        return single_instance;
+        return singleInstance;
     }
 }
