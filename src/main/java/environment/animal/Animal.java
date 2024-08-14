@@ -67,7 +67,6 @@ public abstract class Animal extends SimulationObject {
         }
     }
 
-    // Getters and Setters
     public String getSpeciesName() {
         return speciesName;
     }

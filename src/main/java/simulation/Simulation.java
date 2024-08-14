@@ -13,9 +13,9 @@ import java.util.Timer;
 import environment.World;
 
 public class Simulation extends Application {
-    private int GRID_SIZE = 61;
-    private int SIMULATION_WINDOW_SIZE = 600;
-    private int CONTROL_AND_INFO_PANEL_WINDOW_SIZE = SIMULATION_WINDOW_SIZE / 2;
+    private static final int GRID_SIZE = 61;
+    private static final int SIMULATION_WINDOW_SIZE = 600;
+    private static final int CONTROL_AND_INFO_PANEL_WINDOW_SIZE = SIMULATION_WINDOW_SIZE / 2;
 
     public static void main(String[] args) {
         launch(args);
